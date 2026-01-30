@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ToDoPy</title>
+    <link rel="stylesheet" href="../Static/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <i class="fas fa-clipboard-check"></i>
+                <h1>ToDoPy</h1>
+                <p>Gerencie suas tarefas de forma inteligente</p>
+            </div>
+
+            <div class="auth-nav">
+                <input type="radio" name="auth-tab" id="tab-login" checked>
+                <label for="tab-login">Entrar</label>
+
+                <input type="radio" name="auth-tab" id="tab-signup">
+                <label for="tab-signup">Criar Conta</label>
+                
+                <div class="tab-indicator"></div>
+            </div>
+
+            <div class="form-container">
+                <form id="login-form" class="auth-form">
+                    <div class="input-box">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Seu e-mail" required>
+                    </div>
+                    <div class="input-box">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Sua senha" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Acessar Sistema</button>
+                </form>
+
+                <form id="signup-form" class="auth-form">
+                    <div class="input-box">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Nome completo" required>
+                    </div>
+                    <div class="input-box">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Melhor e-mail" required>
+                    </div>
+                    <div class="input-box">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Crie uma senha" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Cadastrar Agora</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

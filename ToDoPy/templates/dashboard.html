@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoPy</title>
+    <link rel="stylesheet" href="../Static/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <input type="checkbox" id="modal-control" class="modal-state">
+
+    <header class="main-header">
+        <div class="header-top">
+            <div class="logo">
+                <i class="fas fa-clipboard-check"></i>
+                <span>ToDoPy - Gerenciador de Tarefas</span>
+            </div>
+            <div class="user-profile"><i class="fas fa-user-circle"></i></div>
+        </div>
+        <div class="stats-container">
+            <div class="stats-bar">
+                <span><strong>Tarefas hoje:</strong> 5</span>
+                <span><strong>Desempenho:</strong> 80%</span>
+                <span><strong>Média Semanal:</strong> 4.2</span>
+                <span><strong>Concluídas:</strong> 12</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <section class="controls">
+            <div class="filter-group">
+                <select class="styled-select">
+                    <option value="">Categoria</option>
+                    <option value="estudo">Estudo</option>
+                    <option value="trabalho">Trabalho</option>
+                </select>
+                <select class="styled-select">
+                    <option value="alpha">Ordem Alfabética</option>
+                    <option value="priority">Maior Prioridade</option>
+                    <option value="date">Mais Recente</option>
+                </select>
+            </div>
+            
+            <label for="modal-control" class="btn-add">
+                <i class="fas fa-plus"></i> Nova Tarefa
+            </label>
+        </section>
+
+        <section class="kanban-board">
+            <div class="kanban-column">
+                <h3 class="column-title">To Do</h3>
+                <div class="task-card">
+                    <div class="task-header"><input type="checkbox"> <span>Estudar Francês</span></div>
+                    <div class="tags-container">
+                        <span class="task-tag"><i class="fas fa-tag"></i> Estudo</span>
+                        <span class="task-tag"><i class="fas fa-calendar"></i> 25/10/24</span>
+                        <span class="task-tag">Razoável</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kanban-column">
+                <h3 class="column-title">In Progress</h3>
+                </div>
+
+            <div class="kanban-column">
+                <h3 class="column-title">Done</h3>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Tarefa</h2>
+                <label for="modal-control" class="close-modal">&times;</label>
+            </div>
+            <form class="task-form">
+                <div class="input-group">
+                    <label>Título da Tarefa</label>
+                    <input type="text" placeholder="Ex: Estudar Inglês" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Data</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Classificação (Status)</label>
+                        <select required>
+                            <option value="todo">To Do</option>
+                            <option value="progress">In Progress</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Categoria</label>
+                        <select required>
+                            <option value="estudo">Estudo</option>
+                            <option value="trabalho">Trabalho</option>
+                            <option value="pessoal">Pessoal</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Importância</label>
+                        <select required>
+                            <option value="baixa">Baixa</option>
+                            <option value="razoavel">Razoável</option>
+                            <option value="importante">Importante</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <label for="modal-control" class="btn-cancel">Cancelar</label>
+                    <button type="submit" class="btn-save">Criar Tarefa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>© 2026 Desenvolvido por Ian Carlos Lima Tavares. Todos os direitos reservados.</p>
+            <div class="footer-social">
+                <i class="fab fa-github"></i>
+                <i class="fab fa-linkedin"></i>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

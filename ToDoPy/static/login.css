@@ -1,0 +1,150 @@
+:root {
+    --bg-color: linear-gradient(to right, #2b17ff, #ff4d2c); 
+    --accent-gradient: linear-gradient(135deg, #2b17ff 0%, #ff4d2c 100%);
+    --text-dark: #2c3e50;
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background: linear-gradient(to right, #2b17ff, #ff4d2c);
+}
+
+.auth-wrapper {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.auth-card {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.auth-header i {
+    font-size: 3rem;
+    color: #0f0f0f;
+    margin-bottom: 10px;
+}
+
+.auth-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--text-dark);
+}
+
+.auth-header p {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.auth-nav {
+    display: flex;
+    position: relative;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #eee;
+}
+
+.auth-nav input { display: none; }
+
+.auth-nav label {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #bbb;
+    transition: 0.3s;
+}
+
+.tab-indicator {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 50%;
+    height: 2px;
+    background: #2ecc71;
+    transition: 0.3s ease;
+}
+
+#tab-login:checked ~ label[for="tab-login"],
+#tab-signup:checked ~ label[for="tab-signup"] {
+    color: #2ecc71;
+}
+
+#tab-signup:checked ~ .tab-indicator { left: 50%; }
+
+/* LÓGICA DE TROCA DE FORMULÁRIO */
+.form-container {
+    overflow: hidden;
+    position: relative;
+}
+
+#signup-form { display: none; }
+
+#tab-signup:checked ~ .form-container #signup-form { display: block; }
+#tab-signup:checked ~ .form-container #login-form { display: none; }
+
+/* ESTILO DOS INPUTS E BOTÕES */
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-box i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    outline: none;
+    background: #f9f9f9;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: var(--accent-gradient);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(43, 23, 255, 0.3);
+    transition: 0.3s;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.forgot-link {
+    display: block;
+    margin-top: 15px;
+    font-size: 0.8rem;
+    color: #777;
+    text-decoration: none;
+}
