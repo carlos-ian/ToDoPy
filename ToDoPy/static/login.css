@@ -4,24 +4,14 @@
     --text-dark: #2c3e50;
 }
 
-body, html {
+html {
     height: 100%;
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-body {
-    background: linear-gradient(to right, #2b17ff, #ff4d2c);
-}
-
-.auth-wrapper {
-    width: 100%;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
+    background: var(--bg-color);
 }
 
 .auth-card {
@@ -59,7 +49,8 @@ body {
     border-bottom: 2px solid #eee;
 }
 
-.auth-nav input { display: none; }
+/* Esconde os inputs de rádio */
+input[name="auth-tab"] { display: none; }
 
 .auth-nav label {
     flex: 1;
@@ -80,25 +71,21 @@ body {
     transition: 0.3s ease;
 }
 
-#tab-login:checked ~ label[for="tab-login"],
-#tab-signup:checked ~ label[for="tab-signup"] {
+/* Lógica de cores das abas */
+#tab-login:checked ~ .auth-nav label[for="tab-login"],
+#tab-signup:checked ~ .auth-nav label[for="tab-signup"] {
     color: #2ecc71;
 }
 
-#tab-signup:checked ~ .tab-indicator { left: 50%; }
+#tab-signup:checked ~ .auth-nav .tab-indicator { left: 50%; }
 
-/* LÓGICA DE TROCA DE FORMULÁRIO */
-.form-container {
-    overflow: hidden;
-    position: relative;
-}
-
+/* LÓGICA DE TROCA DE FORMULÁRIO CORRIGIDA */
 #signup-form { display: none; }
 
 #tab-signup:checked ~ .form-container #signup-form { display: block; }
 #tab-signup:checked ~ .form-container #login-form { display: none; }
+#tab-login:checked ~ .form-container #login-form { display: block; }
 
-/* ESTILO DOS INPUTS E BOTÕES */
 .input-box {
     position: relative;
     margin-bottom: 20px;
@@ -139,12 +126,4 @@ body {
 .btn-submit:hover {
     transform: translateY(-2px);
     filter: brightness(1.1);
-}
-
-.forgot-link {
-    display: block;
-    margin-top: 15px;
-    font-size: 0.8rem;
-    color: #777;
-    text-decoration: none;
 }

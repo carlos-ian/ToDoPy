@@ -11,6 +11,9 @@
 
     <div class="auth-wrapper">
         <div class="auth-card">
+            <input type="radio" name="auth-tab" id="tab-login" checked>
+            <input type="radio" name="auth-tab" id="tab-signup">
+
             <div class="auth-header">
                 <i class="fas fa-clipboard-check"></i>
                 <h1>ToDoPy</h1>
@@ -18,12 +21,8 @@
             </div>
 
             <div class="auth-nav">
-                <input type="radio" name="auth-tab" id="tab-login" checked>
                 <label for="tab-login">Entrar</label>
-
-                <input type="radio" name="auth-tab" id="tab-signup">
                 <label for="tab-signup">Criar Conta</label>
-                
                 <div class="tab-indicator"></div>
             </div>
 
@@ -31,11 +30,11 @@
                 <form id="login-form" class="auth-form">
                     <div class="input-box">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" placeholder="Seu e-mail" required>
+                        <input type="email" id="login-email" placeholder="Seu e-mail" required>
                     </div>
                     <div class="input-box">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Sua senha" required>
+                        <input type="password" id="login-password" placeholder="Sua senha" required>
                     </div>
                     <button type="submit" class="btn-submit">Acessar Sistema</button>
                 </form>
@@ -43,15 +42,15 @@
                 <form id="signup-form" class="auth-form">
                     <div class="input-box">
                         <i class="fas fa-user"></i>
-                        <input type="text" placeholder="Nome completo" required>
+                        <input type="text" id="signup-name" placeholder="Nome completo" required>
                     </div>
                     <div class="input-box">
                         <i class="fas fa-envelope"></i>
-                        <input type="email" placeholder="Melhor e-mail" required>
+                        <input type="email" id="signup-email" placeholder="Melhor e-mail" required>
                     </div>
                     <div class="input-box">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Crie uma senha" required>
+                        <input type="password" id="signup-password" placeholder="Crie uma senha" required>
                     </div>
                     <button type="submit" class="btn-submit">Cadastrar Agora</button>
                 </form>
@@ -59,5 +58,44 @@
         </div>
     </div>
 
+    <script>
+        const API_BASE_URL = "http://localhost:8000";
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            console.log("Login:", email);
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                user_name: document.getElementById('signup-name').value,
+                email: document.getElementById('signup-email').value,
+                password: document.getElementById('signup-password').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(`Sucesso! Conta para ${payload.user_name} criada.`);
+                    document.getElementById('signup-form').reset();
+                    document.getElementById('tab-login').checked = true;
+                } else {
+                    alert("Erro: " + (data.detail || "Falha no cadastro"));
+                }
+            } catch (error) {
+                alert("Erro de conexão com o servidor.");
+            }
+        });
+    </script>
 </body>
 </html>
