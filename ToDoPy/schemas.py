@@ -12,3 +12,14 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+    class Config:
+        from_attributes = True
+
+class Token(BaseModel):
+    acess_token: str
+    token_type: str

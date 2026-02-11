@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 import schemas, database, models
-from security import get_password_hash
+from security import get_password_hash, verify_password, create_acess_token
 
 auth_router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -25,7 +25,12 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
 
     return new_user
 
-@auth_router.get("/test-list")
-def list_users(db: Session = Depends(database.get_db)):
-    users = db.query(models.User).all()
-    return {"total_no_banco": len(users), "usuarios": users}
+@auth_router.post("/login")
+def login(user: schemas.UserLogin, db: Session = Depends(database.get_db)):
+    user_exists = db.query(models.User).filter(models.User.email == user.email).first()
+    if not user_exists:
+        raise HTTPException(status_code=401, detail="Email ou senha incorretos")
+    if not verify_password(user.password, user_exists.hashed_password):
+        raise HTTPException(status_code=401, detail="Email ou senha incorretos")
+    token = create_acess_token(data={"sub": user_exists.email})
+    return {"access_token": token, "token_type": "bearer"}
