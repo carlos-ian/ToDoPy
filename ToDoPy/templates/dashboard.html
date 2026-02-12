@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ToDoPy</title>
+    <title>ToDoPy - Dashboard</title>
     <link rel="stylesheet" href="../Static/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -21,10 +21,8 @@
         </div>
         <div class="stats-container">
             <div class="stats-bar">
-                <span><strong>Tarefas hoje:</strong> 5</span>
-                <span><strong>Desempenho:</strong> 80%</span>
-                <span><strong>Média Semanal:</strong> 4.2</span>
-                <span><strong>Concluídas:</strong> 12</span>
+                <span><strong>Tarefas hoje:</strong> <span id="count-today">0</span></span>
+                <span><strong>Total:</strong> <span id="count-total">0</span></span>
             </div>
         </div>
     </header>
@@ -37,11 +35,6 @@
                     <option value="estudo">Estudo</option>
                     <option value="trabalho">Trabalho</option>
                 </select>
-                <select class="styled-select">
-                    <option value="alpha">Ordem Alfabética</option>
-                    <option value="priority">Maior Prioridade</option>
-                    <option value="date">Mais Recente</option>
-                </select>
             </div>
             
             <label for="modal-control" class="btn-add">
@@ -52,22 +45,17 @@
         <section class="kanban-board">
             <div class="kanban-column">
                 <h3 class="column-title">To Do</h3>
-                <div class="task-card">
-                    <div class="task-header"><input type="checkbox"> <span>Estudar Francês</span></div>
-                    <div class="tags-container">
-                        <span class="task-tag"><i class="fas fa-tag"></i> Estudo</span>
-                        <span class="task-tag"><i class="fas fa-calendar"></i> 25/10/24</span>
-                        <span class="task-tag">Razoável</span>
-                    </div>
-                </div>
+                <div id="tasks-todo" class="task-list"></div>
             </div>
 
             <div class="kanban-column">
                 <h3 class="column-title">In Progress</h3>
-                </div>
+                <div id="tasks-progress" class="task-list"></div>
+            </div>
 
             <div class="kanban-column">
                 <h3 class="column-title">Done</h3>
+                <div id="tasks-done" class="task-list"></div>
             </div>
         </section>
     </main>
@@ -81,20 +69,20 @@
             <form class="task-form">
                 <div class="input-group">
                     <label>Título da Tarefa</label>
-                    <input type="text" placeholder="Ex: Estudar Inglês" required>
+                    <input type="text" id="task-title" placeholder="Ex: Estudar Inglês" required>
                 </div>
                 
                 <div class="form-row">
                     <div class="input-group">
                         <label>Data</label>
-                        <input type="date" required>
+                        <input type="date" id="task-date" required>
                     </div>
                     <div class="input-group">
                         <label>Classificação (Status)</label>
-                        <select required>
-                            <option value="todo">To Do</option>
-                            <option value="progress">In Progress</option>
-                            <option value="done">Done</option>
+                        <select id="task-status" required>
+                            <option value="To Do">To Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Done">Done</option>
                         </select>
                     </div>
                 </div>
@@ -102,18 +90,18 @@
                 <div class="form-row">
                     <div class="input-group">
                         <label>Categoria</label>
-                        <select required>
-                            <option value="estudo">Estudo</option>
-                            <option value="trabalho">Trabalho</option>
-                            <option value="pessoal">Pessoal</option>
+                        <select id="task-category" required>
+                            <option value="Estudo">Estudo</option>
+                            <option value="Trabalho">Trabalho</option>
+                            <option value="Pessoal">Pessoal</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>Importância</label>
-                        <select required>
-                            <option value="baixa">Baixa</option>
-                            <option value="razoavel">Razoável</option>
-                            <option value="importante">Importante</option>
+                        <select id="task-importance" required>
+                            <option value="Baixa">Baixa</option>
+                            <option value="Razoável">Razoável</option>
+                            <option value="Importante">Importante</option>
                         </select>
                     </div>
                 </div>
@@ -126,15 +114,90 @@
         </div>
     </div>
 
-    <footer class="main-footer">
-        <div class="footer-content">
-            <p>© 2026 Desenvolvido por Ian Carlos Lima Tavares. Todos os direitos reservados.</p>
-            <div class="footer-social">
-                <i class="fab fa-github"></i>
-                <i class="fab fa-linkedin"></i>
-            </div>
-        </div>
-    </footer>
+    <script>
+        const API_BASE_URL = "http://127.0.0.1:8000";
+        const token = localStorage.getItem('token');
 
+        if (!token) {
+            window.location.href = "login.html";
+        }
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/tasks/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const tasks = await response.json();
+                    renderTasks(tasks);
+                }
+            } catch (error) {
+                console.error("Erro ao carregar tarefas:", error);
+            }
+        }
+
+        function renderTasks(tasks) {
+            const columns = {
+                "To Do": document.getElementById('tasks-todo'),
+                "In Progress": document.getElementById('tasks-progress'),
+                "Done": document.getElementById('tasks-done')
+            };
+
+            Object.values(columns).forEach(col => col.innerHTML = '');
+
+            tasks.forEach(task => {
+                const card = `
+                    <div class="task-card">
+                        <div class="task-header"><span>${task.title}</span></div>
+                        <div class="tags-container">
+                            <span class="task-tag"><i class="fas fa-tag"></i> ${task.category}</span>
+                            <span class="task-tag"><i class="fas fa-calendar"></i> ${task.date}</span>
+                            <span class="task-tag">${task.importance || 'Normal'}</span>
+                        </div>
+                    </div>
+                `;
+                if (columns[task.status]) {
+                    columns[task.status].innerHTML += card;
+                }
+            });
+            document.getElementById('count-total').innerText = tasks.length;
+        }
+
+        document.querySelector('.task-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const taskData = {
+                title: document.getElementById('task-title').value,
+                date: document.getElementById('task-date').value,
+                status: document.getElementById('task-status').value,
+                category: document.getElementById('task-category').value,
+                importance: document.getElementById('task-importance').value 
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/tasks/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(taskData)
+                });
+
+                if (response.ok) {
+                    document.getElementById('modal-control').checked = false;
+                    e.target.reset();
+                    loadTasks();
+                } else {
+                    alert("Erro ao criar tarefa. Verifique se o seu Backend aceita o campo 'importance'.");
+                }
+            } catch (err) {
+                alert("Erro de conexão.");
+            }
+        });
+
+        loadTasks();
+    </script>
 </body>
 </html>
