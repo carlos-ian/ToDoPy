@@ -22,3 +22,7 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(database.get_db)
     db.refresh(new_task)
 
     return new_task
+
+@task_router.get("/get", response_model=list[schemas.TaskResponse])
+def read_task(db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_user)):
+    return db.query(models.Task).filter(models.Task.owner_id == current_user.id).all()

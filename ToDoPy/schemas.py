@@ -46,3 +46,8 @@ class TaskCreate(BaseModel):
 class TaskResponse(TaskCreate):
     id: int
     owner_id: int
+    title: str
+    status: TaskStatus | None = "To Do"
+    date: datetime 
+    category: str
+    importance: TaskImportance

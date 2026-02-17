@@ -30,11 +30,24 @@
     <main class="content-wrapper">
         <section class="controls">
             <div class="filter-group">
-                <select class="styled-select">
-                    <option value="">Categoria</option>
-                    <option value="estudo">Estudo</option>
-                    <option value="trabalho">Trabalho</option>
+                <select id="filter-category" class="styled-select">
+                    <option value="">Todas as Categorias</option>
+                    <option value="Estudo">Estudo</option>
+                    <option value="Trabalho">Trabalho</option>
+                    <option value="Pessoal">Pessoal</option>
                 </select>
+
+                <select id="filter-importance" class="styled-select">
+                    <option value="">Todas as Prioridades</option>
+                    <option value="Baixa">Baixa</option>
+                    <option value="Razoável">Razoável</option>
+                    <option value="Importante">Importante</option>
+                </select>
+
+                <div class="date-filter">
+                    <input type="date" id="filter-date" class="styled-select">
+                    <button id="clear-date" class="btn-clear" title="Limpar data">&times;</button>
+                </div>
             </div>
             
             <label for="modal-control" class="btn-add">
@@ -117,6 +130,7 @@
     <script>
         const API_BASE_URL = "http://127.0.0.1:8000";
         const token = localStorage.getItem('token');
+        let allTasks = [];
 
         if (!token) {
             window.location.href = "login.html";
@@ -124,17 +138,33 @@
 
         async function loadTasks() {
             try {
-                const response = await fetch(`${API_BASE_URL}/tasks/`, {
+                const response = await fetch(`${API_BASE_URL}/tasks/get`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (response.ok) {
-                    const tasks = await response.json();
-                    renderTasks(tasks);
+                    allTasks = await response.json();
+                    applyFilters();
                 }
             } catch (error) {
                 console.error("Erro ao carregar tarefas:", error);
             }
+        }
+
+        function applyFilters() {
+            const categoryFilter = document.getElementById('filter-category').value;
+            const importanceFilter = document.getElementById('filter-importance').value;
+            const dateFilter = document.getElementById('filter-date').value;
+
+            const filteredTasks = allTasks.filter(task => {
+                const matchCategory = !categoryFilter || task.category === categoryFilter;
+                const matchImportance = !importanceFilter || task.importance === importanceFilter;
+                const matchDate = !dateFilter || task.date.split('T')[0] === dateFilter;
+                
+                return matchCategory && matchImportance && matchDate;
+            });
+
+            renderTasks(filteredTasks);
         }
 
         function renderTasks(tasks) {
@@ -152,7 +182,7 @@
                         <div class="task-header"><span>${task.title}</span></div>
                         <div class="tags-container">
                             <span class="task-tag"><i class="fas fa-tag"></i> ${task.category}</span>
-                            <span class="task-tag"><i class="fas fa-calendar"></i> ${task.date}</span>
+                            <span class="task-tag"><i class="fas fa-calendar"></i> ${task.date.split('T')[0]}</span>
                             <span class="task-tag">${task.importance || 'Normal'}</span>
                         </div>
                     </div>
@@ -161,8 +191,21 @@
                     columns[task.status].innerHTML += card;
                 }
             });
+
             document.getElementById('count-total').innerText = tasks.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const tasksToday = tasks.filter(t => t.date.split('T')[0] === today).length;
+            document.getElementById('count-today').innerText = tasksToday;
         }
+
+        document.getElementById('filter-category').addEventListener('change', applyFilters);
+        document.getElementById('filter-importance').addEventListener('change', applyFilters);
+        document.getElementById('filter-date').addEventListener('change', applyFilters);
+        document.getElementById('clear-date').addEventListener('click', () => {
+            document.getElementById('filter-date').value = '';
+            applyFilters();
+        });
 
         document.querySelector('.task-form').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -189,8 +232,6 @@
                     document.getElementById('modal-control').checked = false;
                     e.target.reset();
                     loadTasks();
-                } else {
-                    alert("Erro ao criar tarefa. Verifique se o seu Backend aceita o campo 'importance'.");
                 }
             } catch (err) {
                 alert("Erro de conexão.");
