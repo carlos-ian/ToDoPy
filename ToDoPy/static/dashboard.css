@@ -113,11 +113,6 @@ body {
     font-weight: bold;
 }
 
-.styled-select option {
-    color:#0b0b0b;
-    font-weight: bold;
-}
-
 .btn-add {
     background: white;
     color: rgb(6, 6, 6);
@@ -156,31 +151,67 @@ body {
     border-radius: 15px;
     margin-bottom: 20px;
     box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
 }
 
-.task-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 500;
+.task-title {
+    font-weight: bold;
+    font-size: 1.1rem;
     margin-bottom: 15px;
 }
 
-.tags-container {
+.task-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.task-tag {
+.tag {
     background: rgba(255, 255, 255, 0.15);
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-size: 0.7rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
     display: flex;
     align-items: center;
     gap: 5px;
     backdrop-filter: blur(5px);
+}
+
+.task-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.status-group {
+    display: flex;
+    gap: 12px;
+}
+
+.act-btn {
+    background: none !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 5px;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.act-btn:hover {
+    color: #fff;
+    transform: scale(1.15);
+}
+
+.act-btn.del:hover {
+    color: #ff4d4d !important;
 }
 
 .main-footer {
@@ -195,12 +226,6 @@ body {
     justify-content: space-between;
     align-items: center;
     font-size: 0.8rem;
-}
-
-.footer-social i {
-    margin-left: 15px;
-    font-size: 1.2rem;
-    cursor: pointer;
 }
 
 .modal-state {
@@ -232,25 +257,6 @@ body {
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.close-modal {
-    font-size: 2rem;
-    cursor: pointer;
-    color: #999;
 }
 
 .task-form .input-group {
@@ -271,7 +277,6 @@ body {
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #fcfcfc;
-    outline: none;
 }
 
 .form-row {
@@ -289,7 +294,7 @@ body {
 
 .btn-save {
     background: #060606;
-    color: rgb(239, 236, 236);
+    color: white;
     border: none;
     padding: 12px 25px;
     border-radius: 8px;
@@ -301,5 +306,4 @@ body {
     padding: 12px 20px;
     cursor: pointer;
     color: #777;
-    font-weight: 500;
 }

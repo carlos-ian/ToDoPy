@@ -3,121 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - ToDoPy</title>
-    <link rel="stylesheet" href="../Static/login.css">
+    <title>ToDoPy - Dashboard</title>
+    <link rel="stylesheet" href="../Static/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <div class="auth-wrapper">
-        <div class="auth-card">
-            <input type="radio" name="auth-tab" id="tab-login" checked>
-            <input type="radio" name="auth-tab" id="tab-signup">
+    <input type="checkbox" id="modal-control" class="modal-state">
 
-            <div class="auth-header">
+    <header class="main-header">
+        <div class="header-top">
+            <div class="logo">
                 <i class="fas fa-clipboard-check"></i>
-                <h1>ToDoPy</h1>
-                <p>Gerencie suas tarefas de forma inteligente</p>
+                <span>ToDoPy - Gerenciador de Tarefas</span>
+            </div>
+            <div class="user-profile"><i class="fas fa-user-circle"></i></div>
+        </div>
+        <div class="stats-container">
+            <div class="stats-bar">
+                <span><strong>Tarefas hoje:</strong> <span id="count-today">0</span></span>
+                <span><strong>Total:</strong> <span id="count-total">0</span></span>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <section class="controls">
+            <div class="filter-group">
+                <select id="filter-category" class="styled-select">
+                    <option value="">Todas as Categorias</option>
+                    <option value="Estudo">Estudo</option>
+                    <option value="Trabalho">Trabalho</option>
+                    <option value="Pessoal">Pessoal</option>
+                </select>
+
+                <select id="filter-importance" class="styled-select">
+                    <option value="">Todas as Prioridades</option>
+                    <option value="Baixa">Baixa</option>
+                    <option value="Razoável">Razoável</option>
+                    <option value="Importante">Importante</option>
+                </select>
+
+                <div class="date-filter">
+                    <input type="date" id="filter-date" class="styled-select">
+                    <button id="clear-date" class="btn-clear" title="Limpar data">&times;</button>
+                </div>
+            </div>
+            
+            <label for="modal-control" class="btn-add">
+                <i class="fas fa-plus"></i> Nova Tarefa
+            </label>
+        </section>
+
+        <section class="kanban-board">
+            <div class="kanban-column">
+                <h3 class="column-title">To Do</h3>
+                <div id="tasks-todo" class="task-list"></div>
             </div>
 
-            <div class="auth-nav">
-                <label for="tab-login">Entrar</label>
-                <label for="tab-signup">Criar Conta</label>
-                <div class="tab-indicator"></div>
+            <div class="kanban-column">
+                <h3 class="column-title">In Progress</h3>
+                <div id="tasks-progress" class="task-list"></div>
             </div>
 
-            <div class="form-container">
-                <form id="login-form" class="auth-form">
-                    <div class="input-box">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="login-email" placeholder="Seu e-mail" required>
-                    </div>
-                    <div class="input-box">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="login-password" placeholder="Sua senha" required>
-                    </div>
-                    <button type="submit" class="btn-submit">Acessar Sistema</button>
-                </form>
-
-                <form id="signup-form" class="auth-form">
-                    <div class="input-box">
-                        <i class="fas fa-user"></i>
-                        <input type="text" id="signup-name" placeholder="Nome completo" required>
-                    </div>
-                    <div class="input-box">
-                        <i class="fas fa-envelope"></i>
-                        <input type="email" id="signup-email" placeholder="Melhor e-mail" required>
-                    </div>
-                    <div class="input-box">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="signup-password" placeholder="Crie uma senha" required>
-                    </div>
-                    <button type="submit" class="btn-submit">Cadastrar Agora</button>
-                </form>
+            <div class="kanban-column">
+                <h3 class="column-title">Done</h3>
+                <div id="tasks-done" class="task-list"></div>
             </div>
+        </section>
+    </main>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nova Tarefa</h2>
+                <label for="modal-control" class="close-modal">&times;</label>
+            </div>
+            <form class="task-form">
+                <div class="input-group">
+                    <label>Título da Tarefa</label>
+                    <input type="text" id="task-title" placeholder="Ex: Estudar Inglês" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Data</label>
+                        <input type="date" id="task-date" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Classificação (Status)</label>
+                        <select id="task-status" required>
+                            <option value="To Do">To Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Done">Done</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <label>Categoria</label>
+                        <select id="task-category" required>
+                            <option value="Estudo">Estudo</option>
+                            <option value="Trabalho">Trabalho</option>
+                            <option value="Pessoal">Pessoal</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Importância</label>
+                        <select id="task-importance" required>
+                            <option value="Baixa">Baixa</option>
+                            <option value="Razoável">Razoável</option>
+                            <option value="Importante">Importante</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <label for="modal-control" class="btn-cancel">Cancelar</label>
+                    <button type="submit" class="btn-save">Criar Tarefa</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const API_BASE_URL = "http://127.0.0.1:8000";
+        const token = localStorage.getItem('token');
+        let allTasks = [];
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+        if (!token) {
+            window.location.href = "login.html";
+        }
 
+        async function loadTasks() {
             try {
-                const response = await fetch(`${API_BASE_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                const response = await fetch(`${API_BASE_URL}/task/get`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                const data = await response.json();
-
                 if (response.ok) {
-                    localStorage.setItem('token', data.access_token);
-                    alert('Login realizado com sucesso!');
-                    
-                    window.location.href = "dashboard.html"; 
-                } else {
-                    alert("Erro: " + (data.detail || "Falha no login"));
+                    allTasks = await response.json();
+                    renderTasks(allTasks);
+                } else if (response.status === 404) {
+                    const retry = await fetch(`${API_BASE_URL}/tasks/get`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (retry.ok) {
+                        allTasks = await retry.json();
+                        renderTasks(allTasks);
+                    }
                 }
             } catch (error) {
-                alert("Erro de conexão com o servidor.");
+                console.error("Erro ao carregar tarefas:", error);
             }
-        });
+        }
 
-        document.getElementById('signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const payload = {
-                user_name: document.getElementById('signup-name').value,
-                email: document.getElementById('signup-email').value,
-                password: document.getElementById('signup-password').value
+        async function updateStatus(taskId, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/task/${taskId}/status?new_status=${newStatus}`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    loadTasks();
+                } else {
+                    const retry = await fetch(`${API_BASE_URL}/tasks/${taskId}/status?new_status=${newStatus}`, {
+                        method: 'PATCH',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (retry.ok) loadTasks();
+                }
+            } catch (error) {
+                console.error("Erro na requisição:", error);
+            }
+        }
+
+        function renderTasks(tasks) {
+            const columns = {
+                "To Do": document.getElementById('tasks-todo'),
+                "In Progress": document.getElementById('tasks-progress'),
+                "Done": document.getElementById('tasks-done')
             };
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+            Object.values(columns).forEach(col => { if(col) col.innerHTML = ''; });
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    alert(`Sucesso! Conta para ${payload.user_name} criada.`);
-                    document.getElementById('signup-form').reset();
-                    document.getElementById('tab-login').checked = true;
-                } else {
-                    alert("Erro: " + (data.detail || "Falha no cadastro"));
+            tasks.forEach(task => {
+                let buttons = '';
+                if (task.status === 'To Do') {
+                    buttons = `<button onclick="updateStatus(${task.id}, 'In Progress')"><i class="fas fa-play"></i></button>`;
+                } else if (task.status === 'In Progress') {
+                    buttons = `
+                        <button onclick="updateStatus(${task.id}, 'To Do')"><i class="fas fa-undo"></i></button>
+                        <button onclick="updateStatus(${task.id}, 'Done')"><i class="fas fa-check"></i></button>
+                    `;
+                } else if (task.status === 'Done') {
+                    buttons = `<button onclick="updateStatus(${task.id}, 'In Progress')"><i class="fas fa-redo"></i></button>`;
                 }
-            } catch (error) {
-                alert("Erro de conexão com o servidor.");
+
+                const card = `
+                    <div class="task-card">
+                        <div class="task-header"><span>${task.title}</span></div>
+                        <div class="tags-container">
+                            <span class="task-tag">${task.category}</span>
+                            <span class="task-tag">${task.date ? task.date.split('T')[0] : ''}</span>
+                            <span class="task-tag">${task.importance}</span>
+                        </div>
+                        <div class="task-actions-row" style="margin-top:10px; display:flex; justify-content:flex-end; gap:5px;">
+                            ${buttons}
+                        </div>
+                    </div>
+                `;
+                if (columns[task.status]) columns[task.status].innerHTML += card;
+            });
+
+            document.getElementById('count-total').innerText = tasks.length;
+        }
+
+        document.querySelector('.task-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('task-title').value,
+                date: document.getElementById('task-date').value,
+                status: document.getElementById('task-status').value,
+                category: document.getElementById('task-category').value,
+                importance: document.getElementById('task-importance').value 
+            };
+            const response = await fetch(`${API_BASE_URL}/task/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(data)
+            });
+            if (response.ok) {
+                document.getElementById('modal-control').checked = false;
+                loadTasks();
             }
         });
+
+        loadTasks();
     </script>
 </body>
 </html>

@@ -17,13 +17,6 @@
                 <i class="fas fa-clipboard-check"></i>
                 <span>ToDoPy - Gerenciador de Tarefas</span>
             </div>
-            <div class="user-profile"><i class="fas fa-user-circle"></i></div>
-        </div>
-        <div class="stats-container">
-            <div class="stats-bar">
-                <span><strong>Tarefas hoje:</strong> <span id="count-today">0</span></span>
-                <span><strong>Total:</strong> <span id="count-total">0</span></span>
-            </div>
         </div>
     </header>
 
@@ -36,23 +29,18 @@
                     <option value="Trabalho">Trabalho</option>
                     <option value="Pessoal">Pessoal</option>
                 </select>
-
                 <select id="filter-importance" class="styled-select">
                     <option value="">Todas as Prioridades</option>
                     <option value="Baixa">Baixa</option>
                     <option value="Razoável">Razoável</option>
                     <option value="Importante">Importante</option>
                 </select>
-
                 <div class="date-filter">
                     <input type="date" id="filter-date" class="styled-select">
                     <button id="clear-date" class="btn-clear" title="Limpar data">&times;</button>
                 </div>
             </div>
-            
-            <label for="modal-control" class="btn-add">
-                <i class="fas fa-plus"></i> Nova Tarefa
-            </label>
+            <label for="modal-control" class="btn-add"><i class="fas fa-plus"></i> Nova Tarefa</label>
         </section>
 
         <section class="kanban-board">
@@ -60,18 +48,29 @@
                 <h3 class="column-title">To Do</h3>
                 <div id="tasks-todo" class="task-list"></div>
             </div>
-
             <div class="kanban-column">
                 <h3 class="column-title">In Progress</h3>
                 <div id="tasks-progress" class="task-list"></div>
             </div>
-
             <div class="kanban-column">
                 <h3 class="column-title">Done</h3>
                 <div id="tasks-done" class="task-list"></div>
             </div>
         </section>
     </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <span>&copy; 2026 ToDoPy - Organize sua rotina com ToDoPy.</span>
+            </div>
+            <div class="footer-social">
+                <i class="fab fa-github"></i>
+                <i class="fab fa-linkedin"></i>
+                <i class="fas fa-envelope"></i>
+            </div>
+        </div>
+    </footer>
 
     <div class="modal-overlay">
         <div class="modal-content">
@@ -84,7 +83,6 @@
                     <label>Título da Tarefa</label>
                     <input type="text" id="task-title" placeholder="Ex: Estudar Inglês" required>
                 </div>
-                
                 <div class="form-row">
                     <div class="input-group">
                         <label>Data</label>
@@ -99,7 +97,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-row">
                     <div class="input-group">
                         <label>Categoria</label>
@@ -118,7 +115,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="form-actions">
                     <label for="modal-control" class="btn-cancel">Cancelar</label>
                     <button type="submit" class="btn-save">Criar Tarefa</button>
@@ -132,76 +128,98 @@
         const token = localStorage.getItem('token');
         let allTasks = [];
 
-        if (!token) {
-            window.location.href = "login.html";
-        }
+        if (!token) window.location.href = "login.html";
 
         async function loadTasks() {
             try {
                 const response = await fetch(`${API_BASE_URL}/tasks/get`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
                 if (response.ok) {
                     allTasks = await response.json();
                     applyFilters();
                 }
-            } catch (error) {
-                console.error("Erro ao carregar tarefas:", error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         function applyFilters() {
-            const categoryFilter = document.getElementById('filter-category').value;
-            const importanceFilter = document.getElementById('filter-importance').value;
-            const dateFilter = document.getElementById('filter-date').value;
-
-            const filteredTasks = allTasks.filter(task => {
-                const matchCategory = !categoryFilter || task.category === categoryFilter;
-                const matchImportance = !importanceFilter || task.importance === importanceFilter;
-                const matchDate = !dateFilter || task.date.split('T')[0] === dateFilter;
-                
-                return matchCategory && matchImportance && matchDate;
+            const cat = document.getElementById('filter-category').value;
+            const imp = document.getElementById('filter-importance').value;
+            const date = document.getElementById('filter-date').value;
+            const filtered = allTasks.filter(t => {
+                return (!cat || t.category === cat) && 
+                       (!imp || t.importance === imp) && 
+                       (!date || t.date.split('T')[0] === date);
             });
+            renderTasks(filtered);
+        }
 
-            renderTasks(filteredTasks);
+        async function updateStatus(id, status) {
+            await fetch(`${API_BASE_URL}/tasks/${id}/status?new_status=${status}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            loadTasks();
+        }
+
+        async function deleteTask(id) {
+            if (confirm("Excluir tarefa?")) {
+                const response = await fetch(`${API_BASE_URL}/tasks/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    loadTasks();
+                }
+            }
         }
 
         function renderTasks(tasks) {
-            const columns = {
+            const cols = {
                 "To Do": document.getElementById('tasks-todo'),
                 "In Progress": document.getElementById('tasks-progress'),
                 "Done": document.getElementById('tasks-done')
             };
+            Object.values(cols).forEach(c => c.innerHTML = '');
 
-            Object.values(columns).forEach(col => col.innerHTML = '');
+            tasks.forEach(t => {
+                let btns = '';
+                if (t.status === 'To Do') {
+                    btns = `<button class="act-btn" onclick="updateStatus(${t.id}, 'In Progress')"><i class="fas fa-play"></i></button>`;
+                } else if (t.status === 'In Progress') {
+                    btns = `
+                        <button class="act-btn" onclick="updateStatus(${t.id}, 'To Do')"><i class="fas fa-undo"></i></button>
+                        <button class="act-btn" onclick="updateStatus(${t.id}, 'Done')"><i class="fas fa-check"></i></button>`;
+                } else {
+                    btns = `<button class="act-btn" onclick="updateStatus(${t.id}, 'In Progress')"><i class="fas fa-redo"></i></button>`;
+                }
 
-            tasks.forEach(task => {
                 const card = `
                     <div class="task-card">
-                        <div class="task-header"><span>${task.title}</span></div>
-                        <div class="tags-container">
-                            <span class="task-tag"><i class="fas fa-tag"></i> ${task.category}</span>
-                            <span class="task-tag"><i class="fas fa-calendar"></i> ${task.date.split('T')[0]}</span>
-                            <span class="task-tag">${task.importance || 'Normal'}</span>
+                        <div class="task-body">
+                            <span class="task-title">${t.title}</span>
+                            <div class="task-tags">
+                                <span class="tag"><i class="fas fa-tag"></i> ${t.category}</span>
+                                <span class="tag"><i class="fas fa-calendar"></i> ${t.date.split('T')[0]}</span>
+                                <span class="tag priority-tag">${t.importance}</span>
+                            </div>
                         </div>
-                    </div>
-                `;
-                if (columns[task.status]) {
-                    columns[task.status].innerHTML += card;
-                }
+                        <div class="task-footer">
+                            <button class="act-btn del" onclick="deleteTask(${t.id})"><i class="fas fa-trash-alt"></i></button>
+                            <div class="status-group">
+                                ${btns}
+                            </div>
+                        </div>
+                    </div>`;
+                if (cols[t.status]) cols[t.status].innerHTML += card;
             });
 
             document.getElementById('count-total').innerText = tasks.length;
-            
             const today = new Date().toISOString().split('T')[0];
-            const tasksToday = tasks.filter(t => t.date.split('T')[0] === today).length;
-            document.getElementById('count-today').innerText = tasksToday;
+            document.getElementById('count-today').innerText = tasks.filter(t => t.date.split('T')[0] === today).length;
         }
 
-        document.getElementById('filter-category').addEventListener('change', applyFilters);
-        document.getElementById('filter-importance').addEventListener('change', applyFilters);
-        document.getElementById('filter-date').addEventListener('change', applyFilters);
+        document.querySelectorAll('.styled-select').forEach(s => s.addEventListener('change', applyFilters));
         document.getElementById('clear-date').addEventListener('click', () => {
             document.getElementById('filter-date').value = '';
             applyFilters();
@@ -209,32 +227,22 @@
 
         document.querySelector('.task-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const taskData = {
+            const data = {
                 title: document.getElementById('task-title').value,
                 date: document.getElementById('task-date').value,
                 status: document.getElementById('task-status').value,
                 category: document.getElementById('task-category').value,
                 importance: document.getElementById('task-importance').value 
             };
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/tasks/create`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(taskData)
-                });
-
-                if (response.ok) {
-                    document.getElementById('modal-control').checked = false;
-                    e.target.reset();
-                    loadTasks();
-                }
-            } catch (err) {
-                alert("Erro de conexão.");
+            const res = await fetch(`${API_BASE_URL}/tasks/create`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                document.getElementById('modal-control').checked = false;
+                e.target.reset();
+                loadTasks();
             }
         });
 
