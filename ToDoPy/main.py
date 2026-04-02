@@ -30,6 +30,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
+@app.get("/login.html", response_class=HTMLResponse)
+async def login_legacy(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
