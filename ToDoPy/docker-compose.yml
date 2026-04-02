@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+      image: postgres:15-alpine
+      container_name: todopy_db
+      restart: always
+      environment:
+        POSTGRES_USER: user_todo
+        POSTGRES_PASSWORD: password_todo
+        POSTGRES_DB: todopy_db
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      networks:
+        - todopy_network
+
+  api:
+    build: .
+    container_name: todopy_api
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://user_todo:password_todo@db:5432/todopy_db
+    depends_on:
+      - db
+    networks:
+      - todopy_network
+
+networks:
+  todopy_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
